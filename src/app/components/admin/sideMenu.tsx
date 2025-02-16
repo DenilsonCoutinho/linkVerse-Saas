@@ -51,7 +51,7 @@ export default function SideMenu({ session }: PropsMenu) {
         return () => {
             document.removeEventListener("resize", handleResize);
         }
-    }, [window.innerWidth])
+    }, [screenX])
     console.log(screenX)
     return (
         screenX && screenX > 769 ?
