@@ -12,7 +12,7 @@ export default async function Admin() {
     return (
         <div className="bg-bgDefault flex flex-row w-full">
             <SideMenu session={authAdmin} />
-            <Links />
+            <Links session={authAdmin}/>
         </div>
     )
 }

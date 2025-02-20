@@ -52,7 +52,6 @@ export default function SideMenu({ session }: PropsMenu) {
             document.removeEventListener("resize", handleResize);
         }
     }, [screenX])
-    console.log(screenX)
     return (
         screenX && screenX > 769 ?
             <div className="border-r border-gray-400 w-64 h-screen pl-3 flex flex-col items-start justify-between gap-4">
