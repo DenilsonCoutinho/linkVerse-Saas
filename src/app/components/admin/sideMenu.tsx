@@ -8,12 +8,6 @@ import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import { GetUserData } from "@/app/services/getUserName";
 
-interface PropsUsername {
-    id: string;
-    createdAt: Date;
-    username: string;
-    userId: string | null;
-}
 interface PropsDataUser {
     id: string;
     username: string;

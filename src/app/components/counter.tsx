@@ -65,25 +65,25 @@ function ContadorEterno({ initialDate, initialHour, typeColor }: CountProps) {
       <h1 className={`${typeColor === "dark" ? "text-white" : "text-black"} text-black text-center font-semibold text-sm`}>Existimos há:</h1>
       {initialDate && initialHour && <div className="flex flex-wrap items-center justify-center md:max-w-[340px] max-w-[300px] gap-2 mt-2">
 
-        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs text-center font-medium`}>
           {tempo.anos} {tempo.anos > 1 ? "anos" : "ano"},
         </div>
 
-        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs text-center font-medium`}>
           {tempo.meses} {tempo.meses > 1 ? "meses" : "mês"}
         </div>
 
-        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs text-center font-medium`}>
           {tempo.dias} {tempo.dias > 1?"dias":"dia"} 
         </div>
-        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs text-center font-medium`}>
           {tempo.horas} horas
         </div>
-        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] p-[5px] rounded-md text-xs text-center font-medium`}>
           {tempo.minutos} minutos
         </div>
 
-        <div className={`bg-white shadow-md md:p-[8px] py-[5px] md:w-[97px] w-[85px] rounded-md text-xs font-medium`}>
+        <div className={`bg-white shadow-md md:p-[8px] py-[5px] md:w-[97px] w-[85px] rounded-md text-xs text-center font-medium`}>
           {tempo.segundos} segundos
         </div>
 

@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import { Inter, Montserrat } from 'next/font/google'
 import { getSession, SessionProvider } from "next-auth/react"
 import { auth } from '../../auth'
+import { Toaster } from '@/components/ui/toaster'
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -23,6 +24,7 @@ export default async function RootLayout({
       <body className={montserrat.className}>
         <SessionProvider session={session}>
           {children}
+          <Toaster />
         </SessionProvider>
       </body>
     </html>

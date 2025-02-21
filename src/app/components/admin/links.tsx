@@ -6,33 +6,38 @@ import CreateLink from "../../../../actions/createLink"
 import { Session } from "next-auth";
 import { GetLinkUser } from "@/app/services/getLinksUser"
 import { updateLinkOrder } from "@/app/services/updateLinkOrder"
-
+import { useToast } from "@/hooks/use-toast"
 interface listArray {
     id: string;
-    userId: string | null;
     url: string;
+    clicks: number | null;
     active: boolean;
+    userId: string;
+    imagem: string | null;
+    order: number | null;
 }
 interface PropsMenu {
     session: Session | null;
 
 }
 export default function Links({ session }: PropsMenu) {
+    const { toast } = useToast()
     const [linkName, setLinkName] = useState<string>("")
-    const [link, setLink] = useState<listArray[] | null>()
+    const [links, setLinks] = useState<listArray[] | undefined>()
 
     useEffect(() => {
         async function getLink() {
             if (session?.user?.id) {
                 const data = await GetLinkUser(session?.user?.id)
                 const sortedLinks = data?.sort((a: any, b: any) => a?.order - b?.order);
-                setLink(sortedLinks)
+                setLinks(sortedLinks)
             }
         }
         getLink()
     }, [])
 
     async function createLinkUser() {
+        if (!linkName) return alert("Please, enter a link name")
         if (session?.user?.id) {
             await CreateLink(linkName, true, session?.user?.id)
         }
@@ -49,19 +54,38 @@ export default function Links({ session }: PropsMenu) {
         if (originalArray.length !== newArray.length) return false;
         return originalArray.every((element: any, index: number) => element === newArray[index]);
     }
+    
     async function onDragEnd(res: any) {
         if (!res.destination) return
-        if (link) {
-            const item: listArray[] = remodelList(link, res.source.index, res.destination.index)
-            setLink(item)
-            const newCategoryOrder = item?.map((item, index) => ({
-                id: item.id,
-                name: item.url,
-                order: index // O index é o novo valor de order
-            }));
-            const { error, success } = await updateLinkOrder(newCategoryOrder)
-           
+        try {
+            if (!links) {
+                throw new Error('Erro ao atualizar link!');
+            }
+            const isLinkRemodel: listArray[] = remodelList(links, res.source.index, res.destination.index)
+            setLinks(isLinkRemodel)
+            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, name: item.url, order: index }));
+            const arrayIsEqual = await compareArray(isLinkRemodel, links)
+            if (!arrayIsEqual) {
+                const { error, success } = await updateLinkOrder(newLinksOrder)
+                if (!error) {
+                    toast({
+                        variant: "destructive",
+                        title: "Alerta",
+                        description: "Erro ao atualizar posição do link!",
+                    })
+                }
+            }
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast({
+                    title: "Alerta",
+                    description: error?.message,
+                })
+            }
+            console.log('aqio')
         }
+
     }
     return (
         <div className="px-4 w-full">
@@ -74,7 +98,7 @@ export default function Links({ session }: PropsMenu) {
                     {(provided) => (
                         <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
                             {
-                                link?.map((link: any, index: number) => {
+                                links?.map((link: any, index: number) => {
                                     return <LinksListDnd
                                         key={link?.id}
                                         link={link}

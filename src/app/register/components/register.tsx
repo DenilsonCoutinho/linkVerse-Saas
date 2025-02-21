@@ -6,25 +6,23 @@ import { FaCircleCheck, FaRegCircleXmark } from "react-icons/fa6";
 import VerifyUserExist from "@/app/services/verifyUserExist";
 import { CreateUserName } from "../../../../actions/createUserName";
 import Loading from "@/app/components/ui/loadingRegister";
-import { useSession } from "next-auth/react"
-import { auth } from "../../../../auth";
 import { Session } from "next-auth";
-import { GetUserData } from "@/app/services/getUserName";
-
-
+import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import { useRouter } from "next/navigation";
 
 export default function RegisterComponent({ session }: { session: Session | null }) {
     const idUser = session?.user?.id as string
     const [nameUser, setNameUser] = useState("")
     const [nameExist, setNameExist] = useState<boolean | undefined>(undefined)
     const [loading, setLoading] = useState<boolean | undefined>(undefined)
-
+    const route = useRouter()
+    
     const regex = /^[a-zA-Z0-9_]+$/;
     function myRegex(string: string) {
         return regex.test(string)
     }
 
-    //USEEFFECT VALIDA SE USUÁRIO JA EXISTE
     useEffect(() => {
         setLoading(true)
         if (!regex.test(nameUser)) {
@@ -53,14 +51,22 @@ export default function RegisterComponent({ session }: { session: Session | null
     async function verifyExist(name: string) {
         if (nameUser === name) return setNameExist(true)
     }
-    //
-
 
     async function submit() {
-        // const data = await GetUserName(session?.user?.email as string)
-        // console.log(data)
-        // return
-        await CreateUserName(nameUser, idUser)
+        try {
+            await CreateUserName(nameUser, idUser)
+
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(error.message)
+                toast({
+                    variant: "destructive",
+                    title: "Alerta!",
+                    description: error.message,
+                    action: <ToastAction onClick={() =>route.push('/login')} altText="Logar">Logar</ToastAction>
+                })
+            }
+        }
     }
     return (
         <div className="h-screen bg-bgDefault px-2">
@@ -94,9 +100,10 @@ export default function RegisterComponent({ session }: { session: Session | null
                         </div>
                     }
                 </div>
-                {!myRegex(nameUser) && nameUser && <p className="text-red-500 text-sm">Apenas letras e números são permitidos.</p>}
-                {nameUser !== "" && nameExist && <p className="text-red-500 text-sm">Esse nome já está em uso!</p>}
-
+                {
+                    !myRegex(nameUser) && nameUser ? <p className="text-red-500 text-sm">Apenas letras e números são permitidos.</p>
+                        : nameUser !== "" && nameExist && <p className="text-red-500 text-sm">Esse nome já está em uso!</p>
+                }
                 {nameUser !== "" && nameExist ?
                     <button disabled={true} onClick={() => submit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button>
                     : !myRegex(nameUser) && nameUser ? <button disabled={true} onClick={() => submit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button> :
