@@ -1,6 +1,6 @@
 "use server"
 import { db as prisma } from "@/lib/db"
-import { auth } from "../../../../auth"
+import { auth } from "../../../../../auth"
 
 export async function GetUserData(id: string) {
      const DATA_AUTH = await auth()

@@ -6,10 +6,10 @@ import logo from '../../assets/logo.svg'
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Session } from "next-auth";
-import { GetUserData } from "@/app/services/getUserName";
+import { GetUserData } from "@/app/services/users/getUserName";
 
 interface PropsDataUser {
-    id: string;
+    id_link: string;
     username: string;
     createdAt: Date;
     userId: string | null;

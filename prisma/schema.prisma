@@ -17,16 +17,24 @@ model User {
   sessions      Session[]
   userName      UserName[]
   links         Links[]
+  bioName       BioName[]
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
 }
 
 model UserName {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  id_link   String   @id @default(auto()) @map("_id") @db.ObjectId
   username  String   @unique
   createdAt DateTime @default(now())
   User      User?    @relation(fields: [userId], references: [id])
   userId    String?  @db.ObjectId
+}
+
+model BioName {
+  id_Bio  String  @id @default(auto()) @map("_id") @db.ObjectId
+  bioName String  @unique
+  User    User?   @relation(fields: [userId], references: [id])
+  userId  String? @db.ObjectId
 }
 
 model Links {
@@ -35,7 +43,7 @@ model Links {
   clicks Int?
   active Boolean
   User   User?   @relation(fields: [userId], references: [id])
-  userId String @db.ObjectId
+  userId String  @db.ObjectId
   imagem String?
   order  Int? // Novo campo para definir a ordem das categorias
 }

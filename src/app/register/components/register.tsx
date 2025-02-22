@@ -10,18 +10,33 @@ import { Session } from "next-auth";
 import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
+import { GetUserData } from "@/app/services/users/getUserName";
 
-export default function RegisterComponent({ session }: { session: Session | null }) {
-    const idUser = session?.user?.id as string
-    const [nameUser, setNameUser] = useState("")
+function useRegister(nameUser: string, useSession: Session | null) {
     const [nameExist, setNameExist] = useState<boolean | undefined>(undefined)
-    const [loading, setLoading] = useState<boolean | undefined>(undefined)
-    const route = useRouter()
-    
+    const [loading, setLoading] = useState<boolean | undefined>(false)
+    const [isRegexAceept, setIsRegexAceept] = useState<boolean>(false)
+
     const regex = /^[a-zA-Z0-9_]+$/;
-    function myRegex(string: string) {
-        return regex.test(string)
+    const route = useRouter()
+
+    async function hasUserName() {
+        const userName = await GetUserData(useSession?.user?.id as string)
+        if (userName?.username) {
+            route.push("/admin")
+        }
     }
+    useEffect(() => {
+        hasUserName()
+    }, [])
+    
+    function myRegex(string: string) {
+        return setIsRegexAceept(regex.test(string))
+    }
+
+    useEffect(() => {
+        myRegex(nameUser)
+    }, [nameUser])
 
     useEffect(() => {
         setLoading(true)
@@ -52,9 +67,22 @@ export default function RegisterComponent({ session }: { session: Session | null
         if (nameUser === name) return setNameExist(true)
     }
 
-    async function submit() {
+    return {
+        nameExist, loading, isRegexAceept
+    }
+}
+
+export default function RegisterComponent({ session }: { session: Session | null }) {
+    const route = useRouter()
+    const idUser = session?.user?.id as string
+    const [nameUser, setNameUser] = useState("")
+    const { nameExist, loading, isRegexAceept } = useRegister(nameUser, session);
+
+    async function handlerSubmit() {
         try {
+
             await CreateUserName(nameUser, idUser)
+            // route.push('/')
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -63,12 +91,14 @@ export default function RegisterComponent({ session }: { session: Session | null
                     variant: "destructive",
                     title: "Alerta!",
                     description: error.message,
-                    action: <ToastAction onClick={() =>route.push('/login')} altText="Logar">Logar</ToastAction>
+                    action: <ToastAction onClick={() => route.push('/login')} altText="Logar">Logar</ToastAction>
                 })
             }
         }
     }
+
     return (
+
         <div className="h-screen bg-bgDefault px-2">
             <div className="m-auto max-w-[1000px] ">
                 <div className="header m-auto pt-10">
@@ -90,7 +120,7 @@ export default function RegisterComponent({ session }: { session: Session | null
                         :
                         <div className="flex items-center px-1 border-r focus:outline-none border-t rounded-r-md border-b  bg-transparent border-white h-14 text-white">
                             {
-                                nameExist && nameUser !== "" || !myRegex(nameUser) && nameUser ?
+                                nameExist && nameUser !== "" || !isRegexAceept && nameUser ?
                                     <FaRegCircleXmark className="text-red-600" />
                                     : !nameExist && nameUser !== "" ?
                                         <FaCircleCheck className="text-green-400" />
@@ -101,13 +131,13 @@ export default function RegisterComponent({ session }: { session: Session | null
                     }
                 </div>
                 {
-                    !myRegex(nameUser) && nameUser ? <p className="text-red-500 text-sm">Apenas letras e números são permitidos.</p>
+                    !isRegexAceept && nameUser ? <p className="text-red-500 text-sm">Apenas letras e números são permitidos.</p>
                         : nameUser !== "" && nameExist && <p className="text-red-500 text-sm">Esse nome já está em uso!</p>
                 }
                 {nameUser !== "" && nameExist ?
-                    <button disabled={true} onClick={() => submit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button>
-                    : !myRegex(nameUser) && nameUser ? <button disabled={true} onClick={() => submit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button> :
-                        <button disabled={nameUser == "" ? true : loading} onClick={() => submit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button>
+                    <button disabled={true} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button>
+                    : !isRegexAceept && nameUser ? <button disabled={true} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button> :
+                        <button disabled={nameUser == "" ? true : loading} onClick={() => handlerSubmit()} className="text-white font-bold text-center bg-gradient-to-r from-[#04DFFA] via-[#E7851A] to-[#E7851A]  w-full rounded-lg mt-4 h-10">Continuar</button>
                 }
                 <h1 className="text-white md:text-xl text-base text-center mt-20">Já tem uma conta? <span className="underline">Conecte-se</span></h1>
             </div>

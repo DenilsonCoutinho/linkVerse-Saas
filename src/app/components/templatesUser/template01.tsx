@@ -110,7 +110,7 @@ export default function TemplateUser({ profileImage, name, description, links, b
       <SignOutnBtn />
       {/* <input type="color" id="head" name="head" value={myColor} onChange={(e) => setMyColor(e.target.value)} /> */}
       <div className="flex flex-col  items-center">
-        <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4 " >
+        <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4" >
           <Image
             src={profileImage}
             alt="Profile"

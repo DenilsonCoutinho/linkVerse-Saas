@@ -4,17 +4,14 @@ import LinksListDnd from "./dragAndDrop/linksListDnd"
 import { useEffect, useState } from "react"
 import CreateLink from "../../../../actions/createLink"
 import { Session } from "next-auth";
-import { GetLinkUser } from "@/app/services/getLinksUser"
+import { GetLinkUser } from "@/app/services/users/getLinksUser"
 import { updateLinkOrder } from "@/app/services/updateLinkOrder"
 import { useToast } from "@/hooks/use-toast"
 interface listArray {
     id: string;
     url: string;
-    clicks: number | null;
     active: boolean;
     userId: string;
-    imagem: string | null;
-    order: number | null;
 }
 interface PropsMenu {
     session: Session | null;
@@ -67,7 +64,7 @@ export default function Links({ session }: PropsMenu) {
             const arrayIsEqual = await compareArray(isLinkRemodel, links)
             if (!arrayIsEqual) {
                 const { error, success } = await updateLinkOrder(newLinksOrder)
-                if (!error) {
+                if (error) {
                     toast({
                         variant: "destructive",
                         title: "Alerta",
@@ -83,14 +80,13 @@ export default function Links({ session }: PropsMenu) {
                     description: error?.message,
                 })
             }
-            console.log('aqio')
         }
 
     }
     return (
-        <div className="px-4 w-full">
-            <div className="my-10">
-                <input onChange={(e) => setLinkName(e.target.value)} value={linkName} />
+        <div className=" w-full">
+            <div className="my-10 ">
+                <input className="w-full" onChange={(e) => setLinkName(e.target.value)} value={linkName} />
                 <button onClick={() => createLinkUser()} className="bg-white border">Criar</button>
             </div>
             <DragDropContext onDragEnd={onDragEnd}>
