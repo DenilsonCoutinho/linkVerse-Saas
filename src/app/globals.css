@@ -116,6 +116,43 @@ box-shadow: inset 0 0 4px 2px #131212;
   align-items: center;
 }
 
+
+.spinner {
+  width: 56px;
+  height: 56px;
+  display: grid;
+  border: 4.5px solid #0000;
+  border-radius: 50%;
+  border-color: #04dffa #0000;
+  animation: spinner-e04l1k 1s infinite linear;
+}
+
+.spinner::before,
+.spinner::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 2.2px;
+  border: inherit;
+  border-radius: 50%;
+}
+
+.spinner::before {
+  border-color: #e7851a #0000;
+  animation: inherit;
+  animation-duration: 0.5s;
+  animation-direction: reverse;
+}
+
+.spinner::after {
+  margin: 8.9px;
+}
+
+@keyframes spinner-e04l1k {
+  100% {
+     transform: rotate(1turn);
+  }
+}
+
 @layer base {
   :root {
         --background: 0 0% 100%;

@@ -13,7 +13,7 @@ interface PropsDataUser {
     username: string;
     createdAt: Date;
     userId: string | null;
-}
+ }
 interface PropsMenu {
     session: Session | null;
 
@@ -28,6 +28,7 @@ export default function SideMenu({ session }: PropsMenu) {
         async function getUserData() {
             if (session?.user?.id) {
                 const userName = await GetUserData(session?.user?.id as string)
+                if (userName instanceof Error) return
                 setDataUser(userName)
             }
         }

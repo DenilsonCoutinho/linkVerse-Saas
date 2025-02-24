@@ -11,25 +11,19 @@ import { toast } from "@/hooks/use-toast";
 import { ToastAction } from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import { GetUserData } from "@/app/services/users/getUserName";
+import GlobalLoading from "@/app/components/loading/loading";
 
 function useRegister(nameUser: string, useSession: Session | null) {
     const [nameExist, setNameExist] = useState<boolean | undefined>(undefined)
     const [loading, setLoading] = useState<boolean | undefined>(false)
+    const [loadingUi, setLoadingUi] = useState<boolean | undefined>(true)
     const [isRegexAceept, setIsRegexAceept] = useState<boolean>(false)
 
     const regex = /^[a-zA-Z0-9_]+$/;
     const route = useRouter()
 
-    async function hasUserName() {
-        const userName = await GetUserData(useSession?.user?.id as string)
-        if (userName?.username) {
-            route.push("/admin")
-        }
-    }
-    useEffect(() => {
-        hasUserName()
-    }, [])
-    
+
+
     function myRegex(string: string) {
         return setIsRegexAceept(regex.test(string))
     }
@@ -66,9 +60,37 @@ function useRegister(nameUser: string, useSession: Session | null) {
     async function verifyExist(name: string) {
         if (nameUser === name) return setNameExist(true)
     }
+    async function hasUserName() {
+        try {
+            const userName = await GetUserData(useSession?.user?.id as string)
+            if (userName instanceof Error) return
+
+            if (userName?.username) {
+                route.replace("/admin");
+                return
+            }
+            setLoadingUi(false)
+        } catch (error) {
+            if (error instanceof Error) {
+                toast({
+                    variant: "destructive",
+                    title: "Alerta!",
+                    description: error.message,
+                    action: <ToastAction onClick={() => route.push('/login')} altText="Logar">Logar</ToastAction>
+                })
+            }
+        } 
+
+    }
+    useEffect(() => {
+        if (!useSession){
+            return route.replace("/login")
+        }
+        hasUserName()
+    }, [])
 
     return {
-        nameExist, loading, isRegexAceept
+        nameExist, loading, isRegexAceept, loadingUi
     }
 }
 
@@ -76,13 +98,12 @@ export default function RegisterComponent({ session }: { session: Session | null
     const route = useRouter()
     const idUser = session?.user?.id as string
     const [nameUser, setNameUser] = useState("")
-    const { nameExist, loading, isRegexAceept } = useRegister(nameUser, session);
+    const { nameExist, loading, isRegexAceept, loadingUi } = useRegister(nameUser, session);
 
     async function handlerSubmit() {
         try {
 
             await CreateUserName(nameUser, idUser)
-            // route.push('/')
 
         } catch (error: unknown) {
             if (error instanceof Error) {
@@ -96,9 +117,10 @@ export default function RegisterComponent({ session }: { session: Session | null
             }
         }
     }
-
+    if (loadingUi) {
+        return <GlobalLoading />
+    }
     return (
-
         <div className="h-screen bg-bgDefault px-2">
             <div className="m-auto max-w-[1000px] ">
                 <div className="header m-auto pt-10">
