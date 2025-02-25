@@ -49,7 +49,7 @@ export default function SideMenu({ session }: PropsMenu) {
     }, [screenX])
     return (
         screenX && screenX > 769 ?
-            <div className="border-r border-gray-400 w-64 h-screen pl-3 flex flex-col items-start justify-between gap-4">
+            <div className="border-r border-dashed border-gray-400 w-64 h-screen pl-3 flex flex-col items-start justify-between gap-4">
                 <div className=" flex flex-col items-start justify-between gap-4">
                     <Image width={100} src={logo} alt="logo" className="pb-5" />
                     <div className="flex items-center gap-2">

@@ -7,38 +7,36 @@ import { Session } from "next-auth";
 import { GetLinkUser } from "@/app/services/users/getLinksUser"
 import { updateLinkOrder } from "@/app/services/updateLinkOrder"
 import { useToast } from "@/hooks/use-toast"
+import ButtonCreateLink from "./buttonCreateLink"
+
+
 interface listArray {
     id: string;
     url: string;
     active: boolean;
     userId: string;
+    order: number;
 }
-interface PropsMenu {
-    session: Session | null;
 
+interface LinksResponse {
+    data: listArray[];
 }
-export default function Links({ session }: PropsMenu) {
+interface PropsLinks {
+    session: Session | null;
+    linksUser: LinksResponse
+}
+export default function Links({ session, linksUser }: PropsLinks) {
     const { toast } = useToast()
-    const [linkName, setLinkName] = useState<string>("")
     const [links, setLinks] = useState<listArray[] | undefined>()
 
     useEffect(() => {
-        async function getLink() {
-            if (session?.user?.id) {
-                const data = await GetLinkUser(session?.user?.id)
-                const sortedLinks = data?.sort((a: any, b: any) => a?.order - b?.order);
-                setLinks(sortedLinks)
-            }
+        if (Array.isArray(linksUser?.data)) {
+            const sortedLinks = linksUser?.data?.sort((a: any, b: any) => a?.order - b?.order);
+            setLinks(sortedLinks)
         }
-        getLink()
     }, [])
 
-    async function createLinkUser() {
-        if (!linkName) return alert("Please, enter a link name")
-        if (session?.user?.id) {
-            await CreateLink(linkName, true, session?.user?.id)
-        }
-    }
+
 
     function remodelList<T>(list: T[], startIndex: number, endIndex: number) {
         const res = Array.from(list)
@@ -51,9 +49,10 @@ export default function Links({ session }: PropsMenu) {
         if (originalArray.length !== newArray.length) return false;
         return originalArray.every((element: any, index: number) => element === newArray[index]);
     }
-    
+
     async function onDragEnd(res: any) {
         if (!res.destination) return
+
         try {
             if (!links) {
                 throw new Error('Erro ao atualizar link!');
@@ -61,6 +60,7 @@ export default function Links({ session }: PropsMenu) {
             const isLinkRemodel: listArray[] = remodelList(links, res.source.index, res.destination.index)
             setLinks(isLinkRemodel)
             const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, name: item.url, order: index }));
+            console.log(newLinksOrder)
             const arrayIsEqual = await compareArray(isLinkRemodel, links)
             if (!arrayIsEqual) {
                 const { error, success } = await updateLinkOrder(newLinksOrder)
@@ -84,29 +84,29 @@ export default function Links({ session }: PropsMenu) {
 
     }
     return (
-        <div className=" w-full">
-            <div className="my-10 ">
-                <input className="w-full" onChange={(e) => setLinkName(e.target.value)} value={linkName} />
-                <button onClick={() => createLinkUser()} className="bg-white border">Criar</button>
-            </div>
-            <DragDropContext onDragEnd={onDragEnd}>
-                <Droppable droppableId="categories" type="list" direction="vertical" >
-                    {(provided) => (
-                        <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
-                            {
-                                links?.map((link: any, index: number) => {
-                                    return <LinksListDnd
-                                        key={link?.id}
-                                        link={link}
-                                        index={index} />
-                                })
-                            }
-                            {provided.placeholder}
-                        </article>
-                    )}
-                </Droppable>
+        <>
+        <ButtonCreateLink session={session} linksUser={linksUser}/>
+            <div className=" w-full">
+                <DragDropContext onDragEnd={onDragEnd}>
+                    <Droppable droppableId="categories" type="list" direction="vertical" >
+                        {(provided) => (
+                            <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
+                                {
+                                    links?.map((link: any, index: number) => {
+                                        return <LinksListDnd
+                                            key={link?.id}
+                                            link={link}
+                                            index={index} />
+                                    })
+                                }
+                                {provided.placeholder}
+                            </article>
+                        )}
+                    </Droppable>
 
-            </DragDropContext>
-        </div>
+                </DragDropContext>
+            </div>
+        </>
+
     )
 }

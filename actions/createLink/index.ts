@@ -1,7 +1,8 @@
 "use server"
 import { db as prisma } from "@/lib/db"
 import { auth } from "../../auth"
-export default async function CreateLink(link: string, active: boolean, userId: string) {
+import { revalidateTag } from "next/cache"
+export default async function CreateLink(link: string, active: boolean, userId: string,order:number) {
     const DATA_AUTH = await auth()
     if (!DATA_AUTH) {
         throw new Error("Usuário não autenticado!")
@@ -11,10 +12,11 @@ export default async function CreateLink(link: string, active: boolean, userId: 
             data: {
                 url: link,
                 active: active,
-                userId: userId
+                userId: userId,
+                order:order
             }
         })
-
+        await revalidateTag('links')
         return { sucess: "Tudo ok! Vamos lá" }
     } catch (err) {
         return { error: err }
