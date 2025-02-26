@@ -16,7 +16,7 @@ export default function LinksListDnd({ link, index }: linkProps,) {
         <>
             <Draggable draggableId={link.id} index={index}>
                 {(provided) => (
-                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="flex justify-between items-center flex-row gap-4 rounded-lg px-1 bg-gray-100 py-3 my-4">
+                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="flex justify-between items-center flex-row gap-4 rounded-lg px-1 bg-gray-100 py-7 my-4">
                         <div className="flex flex-col gap-4 rounded-lg px- bg-gray-100 ">
                             <div className="flex items-center gap-3 select-none">
                                 <FaGripVertical className="text-lg text-gray-400" />

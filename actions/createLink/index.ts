@@ -8,15 +8,17 @@ export default async function CreateLink(link: string, active: boolean, userId: 
         throw new Error("Usuário não autenticado!")
     }
     try {
-        await prisma.links.create({
+        const newLink = await prisma.links.create({
             data: {
                 url: link,
+                order:order,
                 active: active,
                 userId: userId,
-                order:order
             }
         })
-        await revalidateTag('links')
+        if (newLink) {
+            await revalidateTag("links") // Garante que só revalida se a criação deu certo
+        }
         return { sucess: "Tudo ok! Vamos lá" }
     } catch (err) {
         return { error: err }

@@ -8,6 +8,8 @@ import { GetLinkUser } from "@/app/services/users/getLinksUser"
 import { updateLinkOrder } from "@/app/services/updateLinkOrder"
 import { useToast } from "@/hooks/use-toast"
 import ButtonCreateLink from "./buttonCreateLink"
+import { Skeleton } from "@/components/ui/skeleton"
+import SkeletonLinks from "./skeletonLinks/skeleton"
 
 
 interface listArray {
@@ -23,18 +25,24 @@ interface LinksResponse {
 }
 interface PropsLinks {
     session: Session | null;
-    linksUser: LinksResponse
+    linksData: LinksResponse
 }
-export default function Links({ session, linksUser }: PropsLinks) {
+export default function Links({ session, linksData }: PropsLinks) {
+
     const { toast } = useToast()
     const [links, setLinks] = useState<listArray[] | undefined>()
+    const [loading, setLoading] = useState<boolean | undefined>(true)
 
     useEffect(() => {
-        if (Array.isArray(linksUser?.data)) {
-            const sortedLinks = linksUser?.data?.sort((a: any, b: any) => a?.order - b?.order);
+        try {
+            const sortedLinks = linksData?.data?.sort((a: any, b: any) => a?.order - b?.order);
             setLinks(sortedLinks)
+        } catch (error) {
+
+        } finally {
+            setLoading(false)
         }
-    }, [])
+    }, [linksData])
 
 
 
@@ -42,6 +50,7 @@ export default function Links({ session, linksUser }: PropsLinks) {
         const res = Array.from(list)
         const [removed] = res.splice(startIndex, 1)
         res.splice(endIndex, 0, removed)
+        console.log(res)
         return res
     }
 
@@ -60,7 +69,7 @@ export default function Links({ session, linksUser }: PropsLinks) {
             const isLinkRemodel: listArray[] = remodelList(links, res.source.index, res.destination.index)
             setLinks(isLinkRemodel)
             const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, name: item.url, order: index }));
-            console.log(newLinksOrder)
+
             const arrayIsEqual = await compareArray(isLinkRemodel, links)
             if (!arrayIsEqual) {
                 const { error, success } = await updateLinkOrder(newLinksOrder)
@@ -85,27 +94,31 @@ export default function Links({ session, linksUser }: PropsLinks) {
     }
     return (
         <>
-        <ButtonCreateLink session={session} linksUser={linksUser}/>
-            <div className=" w-full">
-                <DragDropContext onDragEnd={onDragEnd}>
-                    <Droppable droppableId="categories" type="list" direction="vertical" >
-                        {(provided) => (
-                            <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
-                                {
-                                    links?.map((link: any, index: number) => {
-                                        return <LinksListDnd
-                                            key={link?.id}
-                                            link={link}
-                                            index={index} />
-                                    })
-                                }
-                                {provided.placeholder}
-                            </article>
-                        )}
-                    </Droppable>
+            <ButtonCreateLink session={session} linksLength={links?.length || 999} />
+            {loading ?
+                <SkeletonLinks />
+                :
+                <div className=" w-full">
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="categories" type="list" direction="vertical" >
+                            {(provided) => (
+                                <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
+                                    {
+                                        links?.map((link: any, index: number) => {
+                                            return <LinksListDnd
+                                                key={link?.id}
+                                                link={link}
+                                                index={index} />
 
-                </DragDropContext>
-            </div>
+                                        })
+                                    }
+                                    {provided.placeholder}
+                                </article>
+                            )}
+                        </Droppable>
+
+                    </DragDropContext>
+                </div>}
         </>
 
     )
