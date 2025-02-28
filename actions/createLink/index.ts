@@ -2,7 +2,7 @@
 import { db as prisma } from "@/lib/db"
 import { auth } from "../../auth"
 import { revalidateTag } from "next/cache"
-export default async function CreateLink(link: string, active: boolean, userId: string,order:number) {
+export default async function CreateLink(title: string,link: string, active: boolean, userId: string,order:number) {
     const DATA_AUTH = await auth()
     if (!DATA_AUTH) {
         throw new Error("Usuário não autenticado!")
@@ -14,6 +14,7 @@ export default async function CreateLink(link: string, active: boolean, userId: 
                 order:order,
                 active: active,
                 userId: userId,
+                title
             }
         })
         if (newLink) {

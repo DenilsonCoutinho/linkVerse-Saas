@@ -75,7 +75,7 @@ export default function SideMenu({ session }: PropsMenu) {
                 </div>
             </div>
             :
-            <div className="bg-bgDefault h-screen">
+            <div className="bg-bgDefault h-screen md:hidden">
                 <div className="border-t pt-1 fixed bottom-0 border-gray-400 w-full px-3 gap-4">
                     <div className=" flex flex-row items-start justify-between gap-4">
                         {/* <Image width={100} src={logo} alt="logo" className="pb-5" /> */}

@@ -16,7 +16,7 @@ interface listArray {
     id: string;
     url: string;
     active: boolean;
-    userId: string;
+    userId?: string;
     order: number;
 }
 
@@ -25,7 +25,7 @@ interface LinksResponse {
 }
 interface PropsLinks {
     session: Session | null;
-    linksData: LinksResponse
+    linksData: listArray[]
 }
 export default function Links({ session, linksData }: PropsLinks) {
 
@@ -34,23 +34,18 @@ export default function Links({ session, linksData }: PropsLinks) {
     const [loading, setLoading] = useState<boolean | undefined>(true)
 
     useEffect(() => {
-        try {
-            const sortedLinks = linksData?.data?.sort((a: any, b: any) => a?.order - b?.order);
-            setLinks(sortedLinks)
-        } catch (error) {
+        const sortedLinks = linksData?.sort((a: any, b: any) => a?.order - b?.order);
+        // console.log(sortedLinks)
 
-        } finally {
-            setLoading(false)
-        }
+        setLinks(sortedLinks)
+        setLoading(false)
     }, [linksData])
-
 
 
     function remodelList<T>(list: T[], startIndex: number, endIndex: number) {
         const res = Array.from(list)
         const [removed] = res.splice(startIndex, 1)
         res.splice(endIndex, 0, removed)
-        console.log(res)
         return res
     }
 
@@ -61,14 +56,13 @@ export default function Links({ session, linksData }: PropsLinks) {
 
     async function onDragEnd(res: any) {
         if (!res.destination) return
-
         try {
-            if (!links) {
-                throw new Error('Erro ao atualizar link!');
-            }
-            const isLinkRemodel: listArray[] = remodelList(links, res.source.index, res.destination.index)
-            setLinks(isLinkRemodel)
-            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, name: item.url, order: index }));
+            const isLinkRemodel: listArray[] = remodelList(links!!, res.source.index, res.destination.index)
+            const sortedLinks = isLinkRemodel?.sort((a: any, b: any) => a?.order - b?.order);
+            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, url: item.url, order: index ,active:item.active}));
+            console.log(newLinksOrder)
+            setLinks(newLinksOrder)
+          
 
             const arrayIsEqual = await compareArray(isLinkRemodel, links)
             if (!arrayIsEqual) {
@@ -94,7 +88,7 @@ export default function Links({ session, linksData }: PropsLinks) {
     }
     return (
         <>
-            <ButtonCreateLink session={session} linksLength={links?.length || 999} />
+
             {loading ?
                 <SkeletonLinks />
                 :
