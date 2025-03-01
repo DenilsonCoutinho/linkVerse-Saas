@@ -22,7 +22,7 @@ export default async function Admin() {
     }
     const res = await fetch(`http://localhost:3000/api/getLinks?userId=${authAdmin?.user?.id}`, {
         method: "GET",
-        next:{tags:["links"]}
+        next: { tags: ["links"] }
     })
 
     const dataLink = await res.json()
