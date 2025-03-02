@@ -17,35 +17,43 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { GetLinkUser } from "@/app/services/users/getLinksUser"
-interface listArray {
-    id: string;
-    url: string;
-    active: boolean;
-    userId: string;
-    order: number;
-}
-
-interface LinksResponse {
-    data: listArray[];
-}
-
+import { useToast } from "@/hooks/use-toast"
 interface PropsButtonCreateLink {
     session: Session | null;
     linksLength: number
 }
 export default function ButtonCreateLink({ session, linksLength }: PropsButtonCreateLink) {
-    const [linkName, setLinkName] = useState<string>("")
+    const [url, setUrl] = useState<string>("")
     const [title, setTitle] = useState<string>("")
-    const IS_ALWAYS_THE_FIRST_LINK_IN_LIST = linksLength - linksLength - linksLength === -999 ? 0 : linksLength - linksLength - linksLength
+    const IS_ALWAYS_THE_FIRST_LINK_IN_LIST = linksLength - linksLength - linksLength === 0 ? 0 : linksLength - linksLength - linksLength
+    const { toast } = useToast()
 
     async function createLinkUser() {
-        if (!linkName) return alert("Please, enter a link name")
-        await CreateLink(title, linkName, true, session?.user?.id!!, IS_ALWAYS_THE_FIRST_LINK_IN_LIST)
+        try {
+            if (!url || title) {
+                return toast({
+                    variant: "destructive",
+                    title: "Alerta",
+                    description: "Preencha todos os campos!",
+                })
+            }
+            await CreateLink(title, url, true, session?.user?.id!!, IS_ALWAYS_THE_FIRST_LINK_IN_LIST)
+            setUrl("")
+            setTitle("")
+        } catch (error) {
+            if (error instanceof Error) {
+                toast({
+                    variant: "destructive",
+                    title: "Alerta",
+                    description: error.message,
+                })
+            }
+        }
     }
 
 
     const urlOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setLinkName(e.target.value)
+        setUrl(e.target.value)
     }
     const titleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -75,7 +83,7 @@ export default function ButtonCreateLink({ session, linksLength }: PropsButtonCr
                             <Label htmlFor="name" className="text-right">
                                 URL
                             </Label>
-                            <Input id="url" onChange={urlOnChange} placeholder="www.google.com" value={linkName} className=" w-full" />
+                            <Input id="url" onChange={urlOnChange} placeholder="www.google.com" value={url} className=" w-full" />
                         </div>
                     </div>
                     <DialogFooter>

@@ -1,20 +1,21 @@
 "use client"
 import { DragDropContext, Droppable } from "@hello-pangea/dnd"
-import LinksListDnd from "./dragAndDrop/linksListDnd"
+import LinksListDnd from "./linksListDnd"
 import { useEffect, useState } from "react"
-import CreateLink from "../../../../actions/createLink"
+import CreateLink from "../../../../../actions/createLink"
 import { Session } from "next-auth";
 import { GetLinkUser } from "@/app/services/users/getLinksUser"
 import { updateLinkOrder } from "@/app/services/updateLinkOrder"
 import { useToast } from "@/hooks/use-toast"
-import ButtonCreateLink from "./buttonCreateLink"
+import ButtonCreateLink from "../buttonCreateLink"
 import { Skeleton } from "@/components/ui/skeleton"
-import SkeletonLinks from "./skeletonLinks/skeleton"
+import SkeletonLinks from "../skeletonLinks/skeleton"
 
 
 interface listArray {
     id: string;
     url: string;
+    title: string;
     active: boolean;
     userId?: string;
     order: number;
@@ -51,20 +52,18 @@ export default function Links({ session, linksData }: PropsLinks) {
 
     async function compareArray(originalArray: any, newArray: any) {
         if (originalArray.length !== newArray.length) return false;
-        return originalArray.every((element: any, index: number) => element === newArray[index]);
+        return originalArray.every((element: any, index: number) => element === newArray[index])
     }
 
     async function onDragEnd(res: any) {
         if (!res.destination) return
         try {
             const isLinkRemodel: listArray[] = remodelList(links!!, res.source.index, res.destination.index)
-            const sortedLinks = isLinkRemodel?.sort((a: any, b: any) => a?.order - b?.order);
-            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, url: item.url, order: index ,active:item.active}));
-            console.log(newLinksOrder)
+            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, url: item.url,title:item.title, order: index ,active:item.active}));
             setLinks(newLinksOrder)
           
-
-            const arrayIsEqual = await compareArray(isLinkRemodel, links)
+            const arrayIsEqual = await compareArray(links,newLinksOrder )
+        
             if (!arrayIsEqual) {
                 const { error, success } = await updateLinkOrder(newLinksOrder)
                 if (error) {
@@ -98,7 +97,7 @@ export default function Links({ session, linksData }: PropsLinks) {
                             {(provided) => (
                                 <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
                                     {
-                                        links?.map((link: any, index: number) => {
+                                        links?.sort((a: any, b: any) => a?.order - b?.order)?.map((link: any, index: number) => {
                                             return <LinksListDnd
                                                 key={link?.id}
                                                 link={link}
