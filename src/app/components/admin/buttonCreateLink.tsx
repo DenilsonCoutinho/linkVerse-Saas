@@ -25,12 +25,13 @@ interface PropsButtonCreateLink {
 export default function ButtonCreateLink({ session, linksLength }: PropsButtonCreateLink) {
     const [url, setUrl] = useState<string>("")
     const [title, setTitle] = useState<string>("")
+    const [error, setError] = useState<string>("")
     const IS_ALWAYS_THE_FIRST_LINK_IN_LIST = linksLength - linksLength - linksLength === 0 ? 0 : linksLength - linksLength - linksLength
     const { toast } = useToast()
-
+    const regex = /\.(com\.br|com|net|org|gov|edu|mil|io|dev|tech|info|xyz|shop|biz|tv|ai|co|me|us|uk|ca|de|fr|es|it|au|jp|cn|br|mx|ar|cl|nz|ru|in|id|sg|hk|za|pt|tr|vn|kr|th|my)\b/;
     async function createLinkUser() {
         try {
-            if (!url || title) {
+            if (!url || !title) {
                 return toast({
                     variant: "destructive",
                     title: "Alerta",
@@ -53,7 +54,12 @@ export default function ButtonCreateLink({ session, linksLength }: PropsButtonCr
 
 
     const urlOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const testRegex = e.target.value.match(regex)
+        testRegex === null ? setError("URL inválida!"):setError("")
+        console.log(e.target.value.match(regex))
+
         setUrl(e.target.value)
+
     }
     const titleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
@@ -84,6 +90,7 @@ export default function ButtonCreateLink({ session, linksLength }: PropsButtonCr
                                 URL
                             </Label>
                             <Input id="url" onChange={urlOnChange} placeholder="www.google.com" value={url} className=" w-full" />
+                            <p className="text-red-600 text-xs pt-1">{error}</p>
                         </div>
                     </div>
                     <DialogFooter>
