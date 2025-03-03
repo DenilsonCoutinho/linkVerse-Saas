@@ -4,6 +4,7 @@ import { Inter, Montserrat } from 'next/font/google'
 import { getSession, SessionProvider } from "next-auth/react"
 import { auth } from '../../auth'
 import { Toaster } from '@/components/ui/toaster'
+import PreviewProvider from '../../context/triggerPreview'
 const montserrat = Montserrat({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -17,13 +18,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await auth();
- 
+
 
   return (
     <html lang="en">
       <body className={montserrat.className}>
         <SessionProvider session={session}>
-          {children}
+          <PreviewProvider>
+            {children}
+          </PreviewProvider>
           <Toaster />
         </SessionProvider>
       </body>

@@ -17,22 +17,26 @@ import { SignOutnBtn } from "../auth/signOutButton"
 import { useEffect, useState } from "react"
 import { FaFacebook, FaInstagram, FaLinkedin, FaSpotify, FaTiktok, FaYoutube } from 'react-icons/fa6'
 interface Links {
-  url: string
-  label: string
+  data:listArray[]
 }
 interface PropsTemplate {
-  profileImage: any;
+  profileImage?: any;
   name?: string;
   description?: string;
-  links?: Links[];
+  links: Links;
   bgColor?: string;
   textColor?: string;
   buttonColor?: string
 }
-
+interface listArray {
+  id: string;
+  url: string;
+  active: boolean;
+  userId?: string;
+  order: number;
+}
 
 export default function TemplateUser({ profileImage, name, description, links, bgColor, textColor, buttonColor }: PropsTemplate) {
-
   const [myColor, setMyColor] = useState("#00A3E3")
   const [isDarkOrWhite, setIsDarkOrWhite] = useState("")
 
@@ -106,9 +110,9 @@ export default function TemplateUser({ profileImage, name, description, links, b
   };
 
   return (
-    <div className={`flex flex-col  items-center min-h-screen bg-[#${bgColor}] text-[#${textColor}] py-8 px-4`}>
-      <SignOutnBtn />
-      {/* <input type="color" id="head" name="head" value={myColor} onChange={(e) => setMyColor(e.target.value)} /> */}
+    <div className={`flex flex-col z-50 relative items-center min-h-screen bg-[#${bgColor}] text-[#${textColor}] py-8 px-4`}>
+      {/* <SignOutnBtn /> */}
+      <input type="color" id="head" name="head" value={myColor} onChange={(e) => setMyColor(e.target.value)} />
       <div className="flex flex-col  items-center">
         <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4" >
           <Image
@@ -131,14 +135,14 @@ export default function TemplateUser({ profileImage, name, description, links, b
       <div className=" w-full flex flex-col items-center mt-8 space-y-4">
         {
           links &&
-          links?.map((link, index: number) => (
+          links?.data?.map((link, index: number) => (
             <div onClick={handleVibration} key={index} className={`${isDarkOrWhite === "dark" ? "bg-white" : "bg-[#262626] text-white"} active:translate-x-4 flex flex-row items-center customShadow gap-3 max-w-[1000px] py-4 px-3 w-full  duration-200 text-center rounded-lg shadow bg-[${buttonColor}]`}>
               <a
 
                 // href={link?.url}
                 className={` customShaow gap-3 max-w-[1000px] w-full  duration-200 text-center rounded-lg `}
               >
-                {link?.label}
+                {link?.url}
 
               </a>
               <div className="flex flex-col items-start gap-1">
@@ -149,7 +153,7 @@ export default function TemplateUser({ profileImage, name, description, links, b
             </div>
           ))}
       </div>
-      <section className="mt-12 max-w-[1000px] px-2">
+      {/* <section className="mt-12 max-w-[1000px] px-2">
 
         <div className={`${isDarkOrWhite === "dark" ? "bg-white" : "bg-[#262626]"} customShadowInner  rounded-lg p-3`}>
           <h2 className={`${isDarkOrWhite === "dark" ? "text-black" : "text-white"} text-xl font-bold mb-4`}>Nossa História</h2>
@@ -158,7 +162,7 @@ export default function TemplateUser({ profileImage, name, description, links, b
           </p>
         </div>
 
-      </section>
+      </section> */}
     </div>
   );
 };

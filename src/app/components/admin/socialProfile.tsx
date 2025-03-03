@@ -7,6 +7,7 @@ import { MdEdit } from "react-icons/md";
 import { useState } from "react";
 import { Session } from "next-auth";
 import CreateLink from "../../../../actions/createLink";
+import { usePreviews } from "../../../../context/triggerPreview";
 
 
 
@@ -14,8 +15,9 @@ export default function SocialProfile({ session }: { session: Session | null }) 
     function textSlice(text: string) {
         return text.substring(0, 40) + "..."
     }
+    const { preview } = usePreviews()
     return (
-        <div className="flex flex-col w-full  py-2 px-2 bg rounded-md border-slate-700">
+        <div className={`${preview ? "hidden" : "flex"} flex-col w-full  py-2 px-2 bg rounded-md border-slate-700`}>
             <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center ">
                     <div className="relative border shadow-md w-16 h-16 rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-3" >

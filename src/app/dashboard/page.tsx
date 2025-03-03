@@ -11,7 +11,6 @@ export default function Dashboard() {
     { url: "#", label: "testando pra ver se presta" },
     { url: "#", label: "testando pra ver se presta" },
   ]
-  const { data: session ,status} = useSession()
   
   return (
     <div>

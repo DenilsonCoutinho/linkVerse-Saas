@@ -18,6 +18,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { GetLinkUser } from "@/app/services/users/getLinksUser"
 import { useToast } from "@/hooks/use-toast"
+import { usePreviews } from "../../../../context/triggerPreview"
+import Preview from "./preview"
 interface PropsButtonCreateLink {
     session: Session | null;
     linksLength: number
@@ -55,20 +57,21 @@ export default function ButtonCreateLink({ session, linksLength }: PropsButtonCr
 
     const urlOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const testRegex = e.target.value.match(regex)
-        testRegex === null ? setError("URL inválida!"):setError("")
-        console.log(e.target.value.match(regex))
-
+        testRegex === null ? setError("URL inválida!") : setError("")
         setUrl(e.target.value)
 
     }
     const titleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setTitle(e.target.value)
     }
+
+    const { preview } = usePreviews()
+
     return (
-        <>
+        <div className={`${preview ? "hidden" : "flex"} w-full`}>
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button className="flex my-10  items-center gap-3 group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-textColorSecundary duration-500 before:duration-500 hover:duration-500  hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4  origin-left hover:decoration-2 hover:text-textColorDefault relative bg-neutral-800 h- w-full border text-left p-7 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-bgColorBlueLight before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-bgColorOrange after:right-8 after:top-3 after:rounded-full after:blur-lg">
+                    <Button className="flex items-center gap-3 group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-textColorSecundary duration-500 before:duration-500 hover:duration-500  hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4  origin-left hover:decoration-2 hover:text-textColorDefault relative bg-neutral-800 h- w-full border text-left p-7 my-7 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-bgColorBlueLight before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-bgColorOrange after:right-8 after:top-3 after:rounded-full after:blur-lg">
                         Adicionar Link
                         <FaPlusCircle className="text-white" />
                     </Button>
@@ -95,13 +98,14 @@ export default function ButtonCreateLink({ session, linksLength }: PropsButtonCr
                     </div>
                     <DialogFooter>
                         <DialogClose asChild>
-                            <Button onClick={() => createLinkUser()} className="flex my-3  items-center gap-3 group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-textColorSecundary duration-500 before:duration-500 hover:duration-500  hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4  origin-left hover:decoration-2 hover:text-textColorDefault relative bg-neutral-800 h-10 w-full border text-left p-3 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-bgColorBlueLight before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-bgColorOrange after:right-8 after:top-3 after:rounded-full after:blur-lg">
+                            <Button disabled={error ? true : false} onClick={() => createLinkUser()} className="flex my-3  items-center gap-3 group group-hover:before:duration-500 group-hover:after:duration-500 after:duration-500 hover:border-textColorSecundary duration-500 before:duration-500 hover:duration-500  hover:after:-right-8 hover:before:right-12 hover:before:-bottom-8 hover:before:blur hover:underline hover:underline-offset-4  origin-left hover:decoration-2 hover:text-textColorDefault relative bg-neutral-800 h-10 w-full border text-left p-3 text-gray-50 text-base font-bold rounded-lg  overflow-hidden  before:absolute before:w-12 before:h-12 before:content[''] before:right-1 before:top-1 before:z-10 before:bg-bgColorBlueLight before:rounded-full before:blur-lg  after:absolute after:z-10 after:w-20 after:h-20 after:content['']  after:bg-bgColorOrange after:right-8 after:top-3 after:rounded-full after:blur-lg">
                                 Criar
                             </Button>
                         </DialogClose>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
-        </>
+
+        </div>
     )
 }

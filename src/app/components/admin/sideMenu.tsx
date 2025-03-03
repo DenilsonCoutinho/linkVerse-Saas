@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Session } from "next-auth";
 import { GetUserData } from "@/app/services/users/getUserName";
+import { usePreviews } from "../../../../context/triggerPreview";
 
 interface PropsDataUser {
     id_link: string;
@@ -22,6 +23,7 @@ interface PropsMenu {
 export default function SideMenu({ session }: PropsMenu) {
     const [dataUser, setDataUser] = useState<PropsDataUser | null>()
     const [screenX, setScreenX] = useState<number | undefined>()
+    const { preview } = usePreviews()
 
     useEffect(() => {
 
@@ -48,8 +50,8 @@ export default function SideMenu({ session }: PropsMenu) {
         }
     }, [screenX])
     return (
-        screenX && screenX > 769 ?
-            <div className="border-r border-dashed border-gray-400 w-64 h-screen pl-3 flex flex-col items-start justify-between gap-4">
+        <div >
+            <div className="border-r bg-bgDefault md:flex hidden border-dashed border-gray-400 w-64 h-screen pl-3  flex-col items-start justify-between gap-4">
                 <div className=" flex flex-col items-start justify-between gap-4">
                     <Image width={100} src={logo} alt="logo" className="pb-5" />
                     <div className="flex items-center gap-2">
@@ -74,12 +76,11 @@ export default function SideMenu({ session }: PropsMenu) {
                     </div>
                 </div>
             </div>
-            :
-            <div className="bg-bgDefault h-screen md:hidden">
-                <div className="border-t pt-1 fixed bottom-0 border-gray-400 w-full px-3 gap-4">
-                    <div className=" flex flex-row items-start justify-between gap-4">
-                        {/* <Image width={100} src={logo} alt="logo" className="pb-5" /> */}
-                        <div className="flex flex-col items-center gap-1">
+
+            <div className="md:hidden h-16 relative ">
+                <div className="border-t py-2 bottom-0  z-[999] fixed bg-bgDefault border-gray-400 w-full px-2 gap-4">
+                    <div className=" flex flex-row items-start justify-between gap-4 bg-bgDefault ">
+                        <div className="flex flex-col items-center gap-1  ">
                             <FaBarsStaggered className="text-white" />
                             <h1 className="text-white font-medium text-xs">Links</h1>
                         </div>
@@ -102,5 +103,7 @@ export default function SideMenu({ session }: PropsMenu) {
                     </div>
                 </div>
             </div>
+        </div>
+
     )
 }

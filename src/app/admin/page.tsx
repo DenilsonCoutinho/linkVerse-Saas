@@ -5,6 +5,8 @@ import Links from "../components/admin/dragAndDrop/links";
 import SocialProfile from "../components/admin/socialProfile";
 import { redirect } from "next/navigation";
 import ButtonCreateLink from "../components/admin/buttonCreateLink";
+import Preview from "../components/admin/preview";
+import { usePreviews } from "../../../context/triggerPreview";
 
 export const metadata: Metadata = {
     title: 'Admin',
@@ -12,12 +14,12 @@ export const metadata: Metadata = {
 }
 
 export default async function Admin() {
-
+    
     const authAdmin = await auth()
     if (!authAdmin) {
         return redirect('/login')
     }
-    const res = await fetch(`http://localhost:3000/api/getLinks?userId=${authAdmin?.user?.id}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getLinks?userId=${authAdmin?.user?.id}`, {
         method: "GET",
         next: { tags: ["links"] }
     })
@@ -25,13 +27,15 @@ export default async function Admin() {
     const dataLink = await res.json()
     const sortedLinks = dataLink?.data?.sort((a: any, b: any) => a?.order - b?.order);
     return (
-        <div className="bg-bgDefault flex flex-row w-full">
+        <div className="bg-bgDefault flex md:flex-row flex-col-reverse w-full">
             <SideMenu session={authAdmin} />
-            <div className="relative flex flex-col items-center max-w-[800px] w-full mx-auto px-3 md:h-screen h-[44em] overflow-y-auto scroll-smooth overflow-hidden">
+            <div className=" flex bg-bgDefault flex-col items-center max-w-[800px] w-full mx-auto px-3 ">
                 <SocialProfile session={authAdmin} />
                 <ButtonCreateLink session={authAdmin} linksLength={sortedLinks?.length} />
+                <Preview linksData={dataLink}/>
+                <div className="md:h-[23em] h-[75vh] overflow-y-auto w-full">
                 <Links linksData={sortedLinks} session={authAdmin} />
-                {/* <Preview linksData={dataLink} /> */}
+                </div>
             </div>
         </div>
     )

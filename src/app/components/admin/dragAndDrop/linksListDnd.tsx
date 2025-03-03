@@ -78,21 +78,21 @@ export default function LinksListDnd({ link, index }: linkProps,) {
         }
     }
     return (
-        <>
+        <div className="">
             <Draggable draggableId={link.id} index={index}>
                 {(provided) => (
-                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="flex justify-between items-center flex-row gap-4 rounded-lg px-1 bg-gray-100 py-7 my-4">
+                    <div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className="flex justify-between items-center flex-row gap-4 h-28 rounded-lg px-1 bg-gray-100  my-4">
                         <div className="flex items-center flex-row justify-between w-full gap-4 rounded-lg px- bg-gray-100 ">
                             <div className="flex items-center gap-3 select-none">
                                 <VscGripper className="text-lg text-gray-400" />
                                 <div className="flex flex-col gap-2 items-">
                                     <div className="flex items-center gap-1  justify-center">
                                         <Input onBlur={() => editLink(link.id, title, url)} onChange={(e) => setTitle(e.target.value)} value={title} className="relative text-gray-700 text-md font-bold z-10 bg-transparent border-none px-0 outline-none h-4 focus-visible:ring-slate-400 focus-visible:ring-offset-1 " />
-                                        <MdEdit className="text-gray-700 -translate-x-4" />
+                                        <MdEdit className="text-gray-700 -" />
                                     </div>
                                     <div className="flex items-center gap-1  justify-center">
                                         <Input onBlur={() => editLink(link.id, title, url)} onChange={(e) => setUrl(e.target.value)} value={url} className="relative z-10 bg-transparent border-none px-0 outline-none h-4 focus-visible:ring-slate-400 focus-visible:ring-offset-1 " />
-                                        <MdEdit className="text-gray-700 -translate-x-4" />
+                                        <MdEdit className="text-gray-700 " />
                                     </div>
                                 </div>
                             </div>
@@ -103,6 +103,6 @@ export default function LinksListDnd({ link, index }: linkProps,) {
                 }
             </Draggable >
 
-        </>
+        </div>
     )
 }

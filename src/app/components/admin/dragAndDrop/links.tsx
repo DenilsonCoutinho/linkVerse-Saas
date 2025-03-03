@@ -10,6 +10,8 @@ import { useToast } from "@/hooks/use-toast"
 import ButtonCreateLink from "../buttonCreateLink"
 import { Skeleton } from "@/components/ui/skeleton"
 import SkeletonLinks from "../skeletonLinks/skeleton"
+import { usePreviews } from "../../../../../context/triggerPreview"
+import Preview from "../preview"
 
 
 interface listArray {
@@ -29,15 +31,13 @@ interface PropsLinks {
     linksData: listArray[]
 }
 export default function Links({ session, linksData }: PropsLinks) {
-
+    const { preview } = usePreviews()
     const { toast } = useToast()
     const [links, setLinks] = useState<listArray[] | undefined>()
     const [loading, setLoading] = useState<boolean | undefined>(true)
 
     useEffect(() => {
         const sortedLinks = linksData?.sort((a: any, b: any) => a?.order - b?.order);
-        // console.log(sortedLinks)
-
         setLinks(sortedLinks)
         setLoading(false)
     }, [linksData])
@@ -59,11 +59,11 @@ export default function Links({ session, linksData }: PropsLinks) {
         if (!res.destination) return
         try {
             const isLinkRemodel: listArray[] = remodelList(links!!, res.source.index, res.destination.index)
-            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, url: item.url,title:item.title, order: index ,active:item.active}));
+            const newLinksOrder = isLinkRemodel?.map((item, index) => ({ id: item.id, url: item.url, title: item.title, order: index, active: item.active }));
             setLinks(newLinksOrder)
-          
-            const arrayIsEqual = await compareArray(links,newLinksOrder )
-        
+
+            const arrayIsEqual = await compareArray(links, newLinksOrder)
+
             if (!arrayIsEqual) {
                 const { error, success } = await updateLinkOrder(newLinksOrder)
                 if (error) {
@@ -91,7 +91,7 @@ export default function Links({ session, linksData }: PropsLinks) {
             {loading ?
                 <SkeletonLinks />
                 :
-                <div className=" w-full">
+                <div className={`${preview ? "hidden" : "flex"} flex-col items-center justify-center w-full  `}>
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="categories" type="list" direction="vertical" >
                             {(provided) => (
@@ -111,7 +111,8 @@ export default function Links({ session, linksData }: PropsLinks) {
                         </Droppable>
 
                     </DragDropContext>
-                </div>}
+                </div>
+                }
         </>
 
     )
