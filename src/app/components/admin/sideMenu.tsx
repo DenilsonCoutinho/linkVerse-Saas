@@ -14,7 +14,7 @@ interface PropsDataUser {
     username: string;
     createdAt: Date;
     userId: string | null;
- }
+}
 interface PropsMenu {
     session: Session | null;
 
@@ -50,7 +50,7 @@ export default function SideMenu({ session }: PropsMenu) {
         }
     }, [screenX])
     return (
-        <div >
+        !preview && <div>
             <div className="border-r bg-bgDefault md:flex hidden border-dashed border-gray-400 w-64 h-screen pl-3  flex-col items-start justify-between gap-4">
                 <div className=" flex flex-col items-start justify-between gap-4">
                     <Image width={100} src={logo} alt="logo" className="pb-5" />

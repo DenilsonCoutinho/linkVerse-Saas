@@ -5,6 +5,7 @@ import linkedin from "../../assets/logo-black/linkedin.svg"
 import play from "../../assets/logo-black/play.svg"
 import spotify from "../../assets/logo-black/spotify.svg"
 import tiktok from "../../assets/logo-black/tiktok.svg"
+import styled, { keyframes } from "styled-components";
 
 import facebookWhite from "../../assets/logo-white/white/facebookwhite.svg"
 import instagramWhite from "../../assets/logo-white/white/instagramwhite.svg"
@@ -17,7 +18,7 @@ import { SignOutnBtn } from "../auth/signOutButton"
 import { useEffect, useState } from "react"
 import { FaFacebook, FaInstagram, FaLinkedin, FaSpotify, FaTiktok, FaYoutube } from 'react-icons/fa6'
 interface Links {
-  data:listArray[]
+  data: listArray[]
 }
 interface PropsTemplate {
   profileImage?: any;
@@ -36,8 +37,7 @@ interface listArray {
   order: number;
 }
 
-export default function TemplateUser({ profileImage, name, description, links, bgColor, textColor, buttonColor }: PropsTemplate) {
-  const [myColor, setMyColor] = useState("#00A3E3")
+export default function TemplateUserCounter({ profileImage, name, description, links, bgColor, textColor, buttonColor }: PropsTemplate) {
   const [isDarkOrWhite, setIsDarkOrWhite] = useState("")
 
   const linkLogoWhite = [
@@ -95,12 +95,8 @@ export default function TemplateUser({ profileImage, name, description, links, b
   }
 
   useEffect(() => {
-    isColorLightOrDark(myColor)
-    if (myColor) {
-      window.document.body.style.background = `linear-gradient(10deg, ${myColor} 10%, rgba(255, 255, 255, 0.62) 130%)`;
-      window.document.body.style.background = `-webkit-linear-gradient(10deg, ${myColor} 10%, rgba(255, 255, 255, 0.62) 130%);`;
-    }
-  }, [myColor])
+
+  }, [])
 
 
   const handleVibration = () => {
@@ -109,60 +105,111 @@ export default function TemplateUser({ profileImage, name, description, links, b
     }
   };
 
+
+  const cubeAnimation = keyframes`
+  from {
+    transform: scale(0) rotate(0deg) translate(-50%, -50%);
+    opacity: 1;
+  }
+  to {
+    transform: scale(20) rotate(960deg) translate(-50%, -50%);
+    opacity: 0;
+  }
+`;
+
+  // Botão estilizado
+  const Button = styled.button<{ $primary?: boolean }>`
+  background: ${(props) => (props.$primary ? "#BF4F74" : "white")};
+  color: ${(props) => (props.$primary ? "white" : "#BF4F74")};
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid #BF4F74;
+  border-radius: 3px;
+`;
+
+  // Background animado
+  const Background = styled.ul`
+  background: #0040c1;
+  overflow: hidden;
+  list-style: none;
+`;
+
+  const Cube = styled.li<{ delay: string; left: string; top: string; borderColor?: string }>`
+  position: absolute;
+  z-index:-1;
+  width: 10px;
+  height: 10px;
+  border: solid 1px ${(props) => props.borderColor || "#0039ad"};
+  color: transparent;
+  transform-origin: top left;
+  transform: scale(0) rotate(0deg) translate(-50%, -50%);
+  animation: ${cubeAnimation} 7s ease-in forwards infinite;
+  animation-delay: ${(props) => props.delay};
+  left: ${(props) => props.left};
+  top: ${(props) => props.top};
+`;
+
+  const cubes = [
+    { delay: "0s", left: "24vw", top: "40vh", borderColor: "#0046d4" },
+    { delay: "1s", left: "32vw", top: "66vh" },
+    { delay: "2s", left: "69vw", top: "38vh", borderColor: "#0046d4" },
+    { delay: "3s", left: "78vw", top: "2vh" },
+    { delay: "5s", left: "28vw", top: "21vh", borderColor: "#0046d4" },
+    { delay: "7s", left: "15vw", top: "20vh" },
+  ];
   return (
-    <div className={`flex flex-col z-50 relative items-center min-h-screen bg-[#${bgColor}] text-[#${textColor}] py-8 px-4`}>
-      {/* <SignOutnBtn /> */}
-      <input type="color" id="head" name="head" value={myColor} onChange={(e) => setMyColor(e.target.value)} />
-      <div className="flex flex-col  items-center">
-        <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4" >
-          <Image
+    <Background>
+
+      <div className={`flex flex-col relative z-[9999] py-10 items-center overflow-hidden w-full rounded-3xl bg-[#${bgColor}] text-[#${textColor}] px-4`}>
+        {/* <SignOutnBtn /> */}
+        <div className="flex flex-col  items-center">
+          <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4" >
+            {/* <Image
             src={profileImage}
             alt="Profile"
             className=" w-20 h-20 object-cover "
-          />
+          /> */}
+          </div>
+          <h1 className={`${isDarkOrWhite === "dark" ? "text-white" : "text-black"} text-xl font-semibold`}>{name}</h1>
+          <p className={`${isDarkOrWhite === "dark" ? "text-white" : "text-black"} text-sm mt-2 `}>{description}</p>
+          <div className="my-10">
+            <ContadorEterno initialDate="2025-01-20" initialHour="19:00" typeColor={isDarkOrWhite} />
+          </div>
         </div>
-        <h1 className={`${isDarkOrWhite === "dark" ? "text-white" : "text-black"} text-xl font-semibold`}>{name}</h1>
-        <p className={`${isDarkOrWhite === "dark" ? "text-white" : "text-black"} text-sm mt-2 `}>{description}</p>
-        <div className="my-10">
-          <ContadorEterno initialDate="2025-01-20" initialHour="19:00" typeColor={isDarkOrWhite} />
+
+        <div className="flex items-end flex-row gap-5 mb-4">
+          <div className={`text-white duration-700 flex flex-row items-center gap-4  text-3xl`}>
+            <FaFacebook /> <FaInstagram /> <FaYoutube /> <FaTiktok /> <FaSpotify /> <FaLinkedin />
+          </div>
         </div>
-      </div>
 
-      <div className="flex items-end flex-row gap-5 mt-4">
-        <div className={`${isDarkOrWhite === "dark" ? "text-white" : "text-black"} duration-700 flex flex-row items-center gap-4  text-3xl`}><FaFacebook /> <FaInstagram /> <FaYoutube /> <FaTiktok /> <FaSpotify /> <FaLinkedin /></div>
-      </div>
+        <div className=" w-full flex flex-col items-center  space-y-4">
+          {
+            links &&
+            links?.data?.map((link, index: number) => (
+              <div onClick={handleVibration} key={index} className={` bg-white text-black active:translate-x-4 flex flex-row items-center customShadow gap-3 max-w-[700px] py-4 px-3 w-full  duration-200 text-center rounded-lg shadow bg-[${buttonColor}]`}>
+                <a
 
-      <div className=" w-full flex flex-col items-center mt-8 space-y-4">
-        {
-          links &&
-          links?.data?.map((link, index: number) => (
-            <div onClick={handleVibration} key={index} className={`${isDarkOrWhite === "dark" ? "bg-white" : "bg-[#262626] text-white"} active:translate-x-4 flex flex-row items-center customShadow gap-3 max-w-[1000px] py-4 px-3 w-full  duration-200 text-center rounded-lg shadow bg-[${buttonColor}]`}>
-              <a
+                  className={` customShaow gap-3 max-w-[1000px] w-full  duration-200 text-center rounded-lg `}
+                >
+                  {link?.url}
 
-                // href={link?.url}
-                className={` customShaow gap-3 max-w-[1000px] w-full  duration-200 text-center rounded-lg `}
-              >
-                {link?.url}
-
-              </a>
-              <div className="flex flex-col items-start gap-1">
-                <div className={`${isDarkOrWhite === "dark" ? "bg-[#262626]" : "bg-white"}   rounded-full h-1 w-1`}></div>
-                <div className={`${isDarkOrWhite === "dark" ? "bg-[#262626]" : "bg-white"}   rounded-full h-1 w-1`}></div>
-                <div className={`${isDarkOrWhite === "dark" ? "bg-[#262626]" : "bg-white"}   rounded-full h-1 w-1`}></div>
+                </a>
+                <div className="flex flex-col items-start gap-1">
+                  <div className={` bg-gray-500 rounded-full h-1 w-1`}></div>
+                  <div className={` bg-gray-500 rounded-full h-1 w-1`}></div>
+                  <div className={` bg-gray-500 rounded-full h-1 w-1`}></div>
+                </div>
               </div>
-            </div>
-          ))}
-      </div>
-      {/* <section className="mt-12 max-w-[1000px] px-2">
-
-        <div className={`${isDarkOrWhite === "dark" ? "bg-white" : "bg-[#262626]"} customShadowInner  rounded-lg p-3`}>
-          <h2 className={`${isDarkOrWhite === "dark" ? "text-black" : "text-white"} text-xl font-bold mb-4`}>Nossa História</h2>
-          <p className={`${isDarkOrWhite === "dark" ? "text-black" : "text-white"} text-gray-700 leading-6`}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book...
-          </p>
+            ))}
         </div>
 
-      </section> */}
-    </div>
+
+        {cubes.map((cube, index) => (
+          <Cube key={index} {...cube} />
+        ))}
+      </div>
+    </Background>
   );
 };

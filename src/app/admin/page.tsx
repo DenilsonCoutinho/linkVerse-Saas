@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function Admin() {
-    
+
     const authAdmin = await auth()
     if (!authAdmin) {
         return redirect('/login')
@@ -23,20 +23,22 @@ export default async function Admin() {
         method: "GET",
         next: { tags: ["links"] }
     })
-
+   
     const dataLink = await res.json()
     const sortedLinks = dataLink?.data?.sort((a: any, b: any) => a?.order - b?.order);
     return (
-        <div className="bg-bgDefault flex md:flex-row flex-col-reverse w-full">
-            <SideMenu session={authAdmin} />
-            <div className=" flex bg-bgDefault flex-col items-center max-w-[800px] w-full mx-auto px-3 ">
-                <SocialProfile session={authAdmin} />
-                <ButtonCreateLink session={authAdmin} linksLength={sortedLinks?.length} />
-                <Preview linksData={dataLink}/>
-                <div className="md:h-[23em] h-[75vh] overflow-y-auto w-full">
-                <Links linksData={sortedLinks} session={authAdmin} />
+        <div className="bg-bgDefault w-full ">
+            <div className="bg-bgDefault flex md:flex-row flex-col-reverse w-full">
+                <SideMenu session={authAdmin} />
+                <div className=" flex bg-bgDefault flex-col items-center max-w-[800px] w-full mx-auto px-3 ">
+                    <SocialProfile session={authAdmin} />
+                    <ButtonCreateLink session={authAdmin} linksLength={sortedLinks?.length} />
+                    <div className="w-full">
+                        <Links linksData={sortedLinks} session={authAdmin} />
+                    </div>
                 </div>
             </div>
+            <Preview linksData={dataLink} />
         </div>
     )
 }

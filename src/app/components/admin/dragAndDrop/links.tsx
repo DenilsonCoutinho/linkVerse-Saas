@@ -40,6 +40,7 @@ export default function Links({ session, linksData }: PropsLinks) {
         const sortedLinks = linksData?.sort((a: any, b: any) => a?.order - b?.order);
         setLinks(sortedLinks)
         setLoading(false)
+       
     }, [linksData])
 
 
@@ -91,28 +92,31 @@ export default function Links({ session, linksData }: PropsLinks) {
             {loading ?
                 <SkeletonLinks />
                 :
-                <div className={`${preview ? "hidden" : "flex"} flex-col items-center justify-center w-full  `}>
-                    <DragDropContext onDragEnd={onDragEnd}>
-                        <Droppable droppableId="categories" type="list" direction="vertical" >
-                            {(provided) => (
-                                <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
-                                    {
-                                        links?.sort((a: any, b: any) => a?.order - b?.order)?.map((link: any, index: number) => {
-                                            return <LinksListDnd
-                                                key={link?.id}
-                                                link={link}
-                                                index={index} />
+                <div className={`${preview ? "hidden" : ""}  md:h-[20rem] py-2 h-[30rem]  mt-3 overflow-y-auto   w-full  `}>
 
-                                        })
-                                    }
-                                    {provided.placeholder}
-                                </article>
-                            )}
-                        </Droppable>
+                    <div className={`flex flex-col items-center justify-center w-full  `}>
+                        <DragDropContext onDragEnd={onDragEnd}>
+                            <Droppable droppableId="categories" type="list" direction="vertical" >
+                                {(provided) => (
+                                    <article className="w-full" ref={provided.innerRef} {...provided.droppableProps}>
+                                        {
+                                            links?.sort((a: any, b: any) => a?.order - b?.order)?.map((link: any, index: number) => {
+                                                return <LinksListDnd
+                                                    key={link?.id}
+                                                    link={link}
+                                                    index={index} />
 
-                    </DragDropContext>
+                                            })
+                                        }
+                                        {provided.placeholder}
+                                    </article>
+                                )}
+                            </Droppable>
+
+                        </DragDropContext>
+                    </div>
                 </div>
-                }
+            }
         </>
 
     )
