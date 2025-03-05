@@ -49,10 +49,11 @@ export default function SocialProfile({ session }: { session: Session | null }) 
         <div className={`${preview ? "hidden" : "flex"} flex-col w-full  py-2 px-2 bg rounded-md border-slate-700`}>
             <div className="flex items-center gap-2">
                 <div className="flex flex-col items-center ">
-                    <div className="relative border shadow-md w-16 h-16 rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-3" >
+                    <div className=" relative border shadow-md w-16 h-16 rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-3" >
                         {/* <ReactCrop crop={crop} onChange={c => setCrop(c)}>
                             <Image src={imageProfile} alt="imageProfile" />
                         </ReactCrop> */}
+
                         <Image
                             src={imageProfile}
                             alt="Profile"
