@@ -1,18 +1,6 @@
 import Image from "next/image"
-import facebook from "../../assets/logo-black/facebook.svg"
-import instagram from "../../assets/logo-black/instagram.svg"
-import linkedin from "../../assets/logo-black/linkedin.svg"
-import play from "../../assets/logo-black/play.svg"
-import spotify from "../../assets/logo-black/spotify.svg"
-import tiktok from "../../assets/logo-black/tiktok.svg"
 import styled, { keyframes } from "styled-components";
 
-import facebookWhite from "../../assets/logo-white/white/facebookwhite.svg"
-import instagramWhite from "../../assets/logo-white/white/instagramwhite.svg"
-import linkedinWhite from "../../assets/logo-white/white/linkedinwhite.svg"
-import playWhite from "../../assets/logo-white/white/playwhite.svg"
-import spotifyWhite from "../../assets/logo-white/white/spotify-white.svg"
-import tiktokWhite from "../../assets/logo-white/white/tiktok.svg"
 import ContadorEterno from "../counter"
 import { SignOutnBtn } from "../auth/signOutButton"
 import { useEffect, useState } from "react"
@@ -34,7 +22,7 @@ interface listArray {
   order: number;
 }
 
-export default function TemplateUserCounter({ name, description, links, buttonColor }: PropsTemplate) {
+export default function TemplateCloudSky({ name, description, links, buttonColor }: PropsTemplate) {
   const [isDarkOrWhite, setIsDarkOrWhite] = useState("")
 
   const handleVibration = () => {
@@ -43,69 +31,46 @@ export default function TemplateUserCounter({ name, description, links, buttonCo
     }
   };
 
-
-  const cubeAnimation = keyframes`
-  from {
-    transform: scale(0) rotate(0deg) translate(-50%, -50%);
-    opacity: 1;
-  }
-  to {
-    transform: scale(20) rotate(960deg) translate(-50%, -50%);
-    opacity: 0;
-  }
+  // Animação do background
+  const slidein = keyframes`
+  from { background-position: top; background-size: 3000px; }
+  to { background-position: -100px 0px; background-size: 2750px; }
 `;
 
-
-  // Background animado
-  const Background = styled.ul`
+  const BgSky = styled.div`
+  background-image: url('https://images.pexels.com/photos/19670/pexels-photo.jpg');
   position: fixed;
-  width: 100vw;
+  width:100%;
   height: 100vh;
   top: 0;
   left: 0;
   margin: 0;
   padding: 0;
-  background: #0040c1;
   overflow: hidden;
   overflow-y:scroll;
   list-style: none;
+  animation: ${slidein} 100s infinite alternate;
 `;
 
-  const Cube = styled.li<{ delay: string; left: string; top: string; }>`
-  position: fixed;
-  border: solid 1px #0039ad;
-  width: 10px;
-  height: 10px;
-  z-index: -1;
-  color: transparent;
-  transform-origin: top left;
-  transform: scale(0) rotate(0deg) translate(-50%, -50%);
-  animation: ${cubeAnimation} 7s ease-in forwards infinite;
-  animation-delay: ${(props) => props.delay};
-  left: ${(props) => props.left};
-  top: ${(props) => props.top};
+  const Center = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: rgba(75, 75, 250, 0.3);
+  border-radius: 3px;
 `;
-
-  const cubes = [
-    { delay: "0s", left: "24vw", top: "70vh", borderColor: "#0046d4" },
-    { delay: "1s", left: "34vw", top: "40vh", borderColor: "#0046d4" },
-    { delay: "2s", left: "62vw", top: "86vh" },
-    { delay: "4s", left: "79vw", top: "38vh", borderColor: "#0046d4" },
-    { delay: "2s", left: "39vw", top: "58vh", borderColor: "#0046d4" },
-    { delay: "6s", left: "98vw", top: "2vh" },
-    { delay: "8s", left: "38vw", top: "21vh", borderColor: "#0046d4" },
-    { delay: "10s", left: "15vw", top: "50vh" },
-  ];
-
-
 
   return (
-    <Background>
+    <BgSky>
 
       <div className={`flex flex-col relative z-[9999] py-10 items-center overflow-hidden w-full rounded-3xl  px-4`}>
-        {cubes.map((cube, index) => (
-          <Cube key={index} {...cube} />
-        ))}
+
         <div className="flex flex-col  items-center">
           <div className="relative border shadow-md rounded-full overflow-hidden bg-cover text-transparent bg-no-repeat bg-center p-4" >
             {/* <Image
@@ -151,6 +116,6 @@ export default function TemplateUserCounter({ name, description, links, buttonCo
 
       </div>
 
-    </Background>
+    </BgSky>
   );
 };
