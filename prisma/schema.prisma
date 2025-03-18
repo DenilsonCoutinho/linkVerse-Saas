@@ -13,6 +13,7 @@ model User {
   email         String?    @unique
   emailVerified DateTime?
   image         String?
+  imageID       String?
   accounts      Account[]
   sessions      Session[]
   userName      UserName[]
@@ -40,7 +41,7 @@ model BioName {
 model Links {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
   url    String
-  title    String
+  title  String
   order  Int? // Novo campo para definir a ordem das categorias
   clicks Int?
   active Boolean
