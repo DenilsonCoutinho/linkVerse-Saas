@@ -10,17 +10,17 @@ import { GetUserData } from "@/app/services/users/getUserName";
 import { usePreviews } from "../../../../context/triggerPreview";
 
 interface PropsDataUser {
-    id_link: string;
+    id_UserName: string;
     username: string;
     createdAt: Date;
     userId: string | null;
 }
-interface PropsMenu {
-    session: Session | null;
 
+interface PropsUser {
+    session: Session
+    getDataUser: any
 }
-
-export default function SideMenu({ session }: PropsMenu) {
+export default function SideMenu({ session, getDataUser }: PropsUser) {
     const [dataUser, setDataUser] = useState<PropsDataUser | null>()
     const [screenX, setScreenX] = useState<number | undefined>()
     const { preview } = usePreviews()
@@ -70,9 +70,20 @@ export default function SideMenu({ session }: PropsMenu) {
                 <div className="flex items-center pb-5">
                     <div className="flex items-center gap-3 ">
                         <div className="flex items-center justify-center h-10 w-10 overflow-hidden rounded-full bg-gray-500">
-                            {dataUser?.username.substring(0, 1).toUpperCase()}
+                            {getDataUser?.data?.image ?
+                                <img
+                                    src={getDataUser?.data?.image}
+                                    alt="Profile"
+                                    className=" w-16 h-16 object-contain rounded-full"
+                                    width={100} height={100}
+                                />
+                                :
+                                <h1 className="text-white ">
+                                    {dataUser?.username.substring(0, 1).toUpperCase()}
+                                </h1>
+                            }
                         </div>
-                        <h1 className="text-white font-bold text-xs">@{dataUser?.username}</h1>
+                        <h1 className="text-white font-bold text-xs">{dataUser?.username}</h1>
                     </div>
                 </div>
             </div>
@@ -95,7 +106,15 @@ export default function SideMenu({ session }: PropsMenu) {
                         <div className="flex items-center ">
                             <div className="flex flex-col items-center gap-1 ">
                                 <div className="flex items-center justify-center text-xs text-white h-4 w-4 overflow-hidden rounded-full bg-gray-500">
-                                    {dataUser?.username.substring(0, 1).toUpperCase()}
+                                    {getDataUser?.data?.image ?
+                                        <img
+                                            src={getDataUser?.data?.image}
+                                            alt="Profile"
+                                            className=" w-16 h-16 object-cover   rounded-full"
+                                            width={100} height={100}
+                                        />
+                                        :
+                                        dataUser?.username.substring(0, 1).toUpperCase()}
                                 </div>
                                 <h1 className="text-white font-medium text-xs">Perfil</h1>
                             </div>

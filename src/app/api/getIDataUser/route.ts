@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const data = await prisma.user.findFirst(
         {
             where: { id: userId },
-            select: {id:true, image:true,imageID:true,bioName: true }
+            select: { id: true, image: true, imageID: true, userName: true, }
         }
     )
     return NextResponse.json({ data })

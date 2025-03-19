@@ -18,6 +18,9 @@ import { MdEdit } from "react-icons/md";
 import { Input } from "@/components/ui/input";
 import UpdateImage from "@/app/services/updateImage";
 import { Session } from "next-auth";
+import { revalidateTag } from "next/cache";
+import DeleteImage from "@/app/services/deleteImage";
+import { useToast } from "@/hooks/use-toast";
 const authenticator = async () => {
     try {
         const response = await fetch("http://localhost:3000/api/authUpload");
@@ -62,6 +65,7 @@ const getCroppedImage = (
     });
 };
 export function ModalCropImage({ session }: { session: Session | null }) {
+    const { toast } = useToast()
 
     const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
     const urlEndpoint = process.env.NEXT_PUBLIC_IMAGEKIT_URL_ENDPOINT;
@@ -118,16 +122,58 @@ export function ModalCropImage({ session }: { session: Session | null }) {
         try {
             const response = await fetch("https://upload.imagekit.io/api/v1/files/upload", options);
             const data = await response.json();
-            console.log(data);
-            await UpdateImage(session?.user?.id!,data?.fileId, data?.url)
+            await UpdateImage(session?.user?.id!, data?.fileId, data?.url)
         } catch (error) {
-            console.error("Upload failed", error);
+            toast({
+                variant: "destructive",
+                title: "Alerta",
+                description: "Erro ao atualizar posição do link!",
+            })
+        }finally{
+            setOpen(false)
+            setImageSrc(null)
         }
     };
 
 
     async function deleteImage() {
-        const response = await fetch("http://localhost:3000/api/deleteFile");
+        try {
+            const getIDataUser = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/getIDataUser?userId=${session?.user?.id}`, {
+                method: "GET",
+            })
+
+            const dataUser = await getIDataUser.json()
+            if(!dataUser?.data?.imageID){
+                return toast({
+                    title: "Erro!",
+                    variant:"destructive",
+                    description: "Não há Imagem para ser deletada!",
+                })
+            }
+            const response = await fetch(`http://localhost:3000/api/deleteFile?idImage=${dataUser?.data?.imageID}`);
+            if (!response.ok) throw new Error("Erro ao deletar imagem!")
+               
+            await DeleteImage(session?.user?.id!)
+            setOpen(false)
+            setImageSrc(null)
+            return toast({
+                title: "Ok!",
+                variant:"default",
+                description: "Imagem deletada com sucesso!",
+            })
+        } catch (error) {
+            if (error instanceof Error) {
+                return toast({
+                    title: "Alerta",
+                    variant:"destructive",
+                    description: error?.message,
+                })
+            }
+        }finally{
+            setOpen(false)
+            setImageSrc(null)
+        }
+
 
     }
     return (

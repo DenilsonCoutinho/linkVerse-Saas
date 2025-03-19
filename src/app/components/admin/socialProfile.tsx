@@ -11,11 +11,11 @@ import { useEffect, useState } from "react";
 import { ModalCropImage } from "../modalCropImage/modalCropImage";
 interface PropsUser {
     session: Session
-    getIDataUser: any
+    getDataUser: any
 }
-export default function SocialProfile({ session, getIDataUser }: PropsUser) {
-    const dataUser = getIDataUser
-    // const [dataUser, setDataUser] = useState<any>()
+export default function SocialProfile({ session, getDataUser }: PropsUser) {
+    const dataUser = getDataUser
+    // console.log(dataUser)
     function textSlice(text: string) {
         return text.substring(0, 40) + "..."
     }
@@ -46,7 +46,11 @@ export default function SocialProfile({ session, getIDataUser }: PropsUser) {
                             width={100} height={100}
                         />
                             :
-                            <></>
+                            <div className="flex items-center justify-center w-16 h-16 overflow-hidden rounded-full bg-gray-500">
+                                <h1 className="text-white ">
+                                    {dataUser?.data.userName[0].username?.substring(0, 1).toUpperCase()}
+                                </h1>
+                            </div>
                         }
                     </div>
 
@@ -54,7 +58,7 @@ export default function SocialProfile({ session, getIDataUser }: PropsUser) {
                 </div>
                 <div className="flex flex-col ">
                     <div className="flex items-center flex-row gap-1">
-                        <h1 className="NameBio text-white text-sm font-medium">@Deni</h1>
+                        <h1 className="NameBio text-white text-sm font-medium">{dataUser?.data?.userName[0]?.username}</h1>
                         <MdEdit className="text-white" />
                     </div>
                     <div className="flex items-center flex-row gap-1">

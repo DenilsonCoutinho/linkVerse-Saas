@@ -24,7 +24,7 @@ model User {
 }
 
 model UserName {
-  id_link   String   @id @default(auto()) @map("_id") @db.ObjectId
+  id_UserName   String   @id @default(auto()) @map("_id") @db.ObjectId
   username  String   @unique
   createdAt DateTime @default(now())
   User      User?    @relation(fields: [userId], references: [id])

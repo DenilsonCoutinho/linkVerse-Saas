@@ -36,9 +36,9 @@ export default async function Admin() {
     return (
         <div className="bg-bgDefault w-full ">
             <div className="bg-bgDefault flex md:flex-row flex-col-reverse w-full">
-                <SideMenu session={authAdmin} />
+                <SideMenu getDataUser={dataUser} session={authAdmin} />
                 <div className=" flex bg-bgDefault flex-col items-center max-w-[800px] w-full mx-auto px-3 ">
-                    <SocialProfile session={authAdmin} getIDataUser={dataUser} />
+                    <SocialProfile session={authAdmin} getDataUser={dataUser} />
 
                     <ButtonCreateLink session={authAdmin} linksLength={sortedLinks?.length} />
                     <div className="w-full">

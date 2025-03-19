@@ -92,7 +92,7 @@ export default function Links({ session, linksData }: PropsLinks) {
             {loading ?
                 <SkeletonLinks />
                 :
-                <div className={`${preview ? "hidden" : ""}  md:h-[23rem] py-2 h-[30rem]  mt-3 overflow-y-auto w-full`}>
+                <div className={`${preview ? "hidden" : ""}  md:h-[21.4rem] py-2 h-[30rem]  mt-3 overflow-y-auto w-full`}>
 
                     <div className={`flex flex-col items-center justify-center w-full  `}>
                         <DragDropContext onDragEnd={onDragEnd}>
